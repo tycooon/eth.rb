@@ -449,7 +449,7 @@ module Eth
           from: key.address,
           nonce: nonce || get_nonce(key.address),
         })
-        params[:gas_limit] = eth_estimate_gas(params)["result"].to_i(16) if params[:gas_limit].zero?
+        params[:gas_limit] = eth_estimate_gas(params)["result"].to_i(16) * 1.1 if params[:gas_limit].zero?
         tx = Eth::Tx.new(params)
         tx.sign key
         eth_send_raw_transaction(tx.hex)["result"]
