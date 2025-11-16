@@ -270,6 +270,7 @@ module Eth
     # @return [Object] returns the result of the call.
     # @see https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call
     def call(contract, function, *args, **kwargs)
+      debug { "call #{contract.name} #{function} #{args}" }
       function = contract.function(function, args: args.size)
       output = function.decode_call_result(
         eth_call(
@@ -317,6 +318,7 @@ module Eth
     #   @param **tx_value [Integer] optional transaction value field filling.
     # @return [Object] returns the result of the transaction.
     def transact(contract, function, *args, **kwargs)
+      debug { "transact #{contract.name} #{function} #{args} #{kwargs}" }
       gas_limit = if kwargs[:gas_limit]
           kwargs[:gas_limit]
         else
@@ -442,12 +444,12 @@ module Eth
         })
       end
       unless key.nil?
-
         # use the provided key as sender and signer
         params.merge!({
           from: key.address,
           nonce: nonce || get_nonce(key.address),
         })
+        params[:gas_limit] = eth_estimate_gas(params)["result"].to_i(16) if params[:gas_limit].zero?
         tx = Eth::Tx.new(params)
         tx.sign key
         eth_send_raw_transaction(tx.hex)["result"]
@@ -475,6 +477,7 @@ module Eth
     def send_command(command, args)
       @block_number ||= "latest"
       args << block_number if ["eth_getBalance", "eth_call"].include? command
+      debug { "send_command #{command} #{args}" }
       payload = {
         jsonrpc: "2.0",
         method: command,
@@ -519,6 +522,10 @@ module Eth
       else
         params
       end
+    end
+
+    def debug(&)
+      Eth.logger.debug(&)
     end
   end
 end

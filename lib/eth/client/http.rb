@@ -58,7 +58,12 @@ module Eth
       else
         @uri = uri
       end
-      @client = HTTPX.plugin(:persistent).with(headers: { "Content-Type" => "application/json" })
+
+      @client =
+        HTTPX
+          .plugin(:persistent)
+          .with(headers: { "Content-Type" => "application/json" })
+          .with(timeout: { connect_timeout: 3, request_timeout: 3 })
     end
 
     # Sends an RPC request to the connected HTTP client.
@@ -66,7 +71,10 @@ module Eth
     # @param payload [Hash] the RPC request parameters.
     # @return [String] a JSON-encoded response.
     def send_request(payload)
-      response = @client.post(@uri, body: payload)
+      # debug { "send_request #{@uri} #{payload}" }
+      response = @client.post(@uri, body: payload).raise_for_status
+      # debug { "#{response.inspect}" }
+      # debug { "#{response.body}" }
       response.body.to_s
     end
   end

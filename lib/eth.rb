@@ -14,6 +14,13 @@
 
 # Provides the {Eth} module.
 module Eth
+  def self.logger
+    @logger ||= Logger.new(nil)
+  end
+
+  def self.logger=(logger)
+    @logger = logger
+  end
 end
 
 # Loads the {Eth} module classes.
