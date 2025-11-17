@@ -452,7 +452,7 @@ module Eth
 
         if params[:gas_limit].zero?
           params.delete(:gas_limit)
-          params[:gas_limit] = eth_estimate_gas(params)["result"].to_i(16) * 2.0
+          params[:gas_limit] = eth_estimate_gas(params)["result"].to_i(16) * 1.5
         end
 
         tx = Eth::Tx.new(params)
