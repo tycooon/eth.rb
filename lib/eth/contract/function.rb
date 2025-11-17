@@ -72,7 +72,29 @@ module Eth
       return nil if data == "0x"
 
       types = outputs.map(&:parsed_type)
-      Eth::Abi.decode(types, data)
+      data = Eth::Abi.decode(types, data)
+
+      map_with_names(data, outputd)
+    end
+
+    private
+
+    def map_with_names(data, outputs)
+      case outputs.size
+      when 1
+
+      data.map.with_index do |value, index|
+        type = types[index]
+
+        case [type.base_type, type.dimensions]
+        in "tuple", [0]
+          value.map { map_with_names(it, type.components) }
+        in "tuple", []
+          map_with_names(value, type.components)
+        else
+          [ type.name, value ]
+        end
+      end
     end
   end
 end
