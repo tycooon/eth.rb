@@ -63,7 +63,7 @@ module Eth
         HTTPX
           .plugin(:persistent)
           .with(headers: { "Content-Type" => "application/json" })
-          .with(timeout: { connect_timeout: 3, request_timeout: 3 })
+          .with(timeout: Eth.client_timeout)
     end
 
     # Sends an RPC request to the connected HTTP client.

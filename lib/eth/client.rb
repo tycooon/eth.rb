@@ -270,7 +270,7 @@ module Eth
     # @return [Object] returns the result of the call.
     # @see https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call
     def call(contract, function, *args, **kwargs)
-      debug { "call #{contract.name} #{function} #{args}" }
+      debug { "call #{contract.address} [#{contract.name}] #{function} #{args}" }
       function = contract.function(function, args: args.size)
       output = function.decode_call_result(
         eth_call(
@@ -318,7 +318,7 @@ module Eth
     #   @param **tx_value [Integer] optional transaction value field filling.
     # @return [Object] returns the result of the transaction.
     def transact(contract, function, *args, **kwargs)
-      debug { "transact #{contract.name} #{function} #{args} #{kwargs}" }
+      debug { "transact #{contract.address} [#{contract.name}] #{function} #{args} #{kwargs}" }
       gas_limit = if kwargs[:gas_limit]
           kwargs[:gas_limit]
         else
@@ -449,7 +449,12 @@ module Eth
           from: key.address,
           nonce: nonce || get_nonce(key.address),
         })
-        params[:gas_limit] = eth_estimate_gas(params)["result"].to_i(16) * 1.1 if params[:gas_limit].zero?
+
+        if params[:gas_limit].zero?
+          params.delete(:gas_limit)
+          params[:gas_limit] = eth_estimate_gas(params)["result"].to_i(16) * 1.1
+        end
+
         tx = Eth::Tx.new(params)
         tx.sign key
         eth_send_raw_transaction(tx.hex)["result"]

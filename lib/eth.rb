@@ -21,6 +21,14 @@ module Eth
   def self.logger=(logger)
     @logger = logger
   end
+
+  def self.client_timeout
+    @client_timeout ||= {}
+  end
+
+  def self.client_timeout=(timeout)
+    @client_timeout = timeout
+  end
 end
 
 # Loads the {Eth} module classes.
