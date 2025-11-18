@@ -451,7 +451,8 @@ module Eth
         })
 
         if params[:gas_limit] == 0 || params[:gas_limit] == :max_fee
-          gas_limit = BigDecimal(1.1) * eth_estimate_gas(params.except(:gas_limit))["result"].to_i(16)
+          gas_limit_coef = BigDecimal(ENV.fetch("GAS_LIMIT_COEF", 1.1))
+          gas_limit = gas_limit_coef * eth_estimate_gas(params.except(:gas_limit))["result"].to_i(16)
 
           if params[:gas_limit] == :max_fee
             fee = BigDecimal(1e18) / gas_limit
@@ -503,6 +504,7 @@ module Eth
       if (err = output["error"])
         raise RpcError.new(err["message"], err["data"])
       end
+      debug { "result #{output["result"]}" }
       output
     end
 

@@ -71,16 +71,16 @@ module Eth
     # @param payload [Hash] the RPC request parameters.
     # @return [String] a JSON-encoded response.
     def send_request(payload)
-      debug { "send_request #{@uri} #{payload}" }
+      debug_http { "send_request #{@uri} #{payload}" }
       response = @client.post(@uri, body: payload).raise_for_status
-      debug { "#{response.inspect}" }
-      debug { "#{response.body}" }
+      debug_http { "#{response.inspect}" }
+      debug_http { "#{response.body}" }
       response.body.to_s
     end
 
-    def debug(&)
+    def debug_http(&)
       return unless ENV["ETH_LOG_HTTP"]
-      super
+      debug(&)
     end
   end
 
