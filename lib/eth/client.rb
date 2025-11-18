@@ -436,9 +436,9 @@ module Eth
     # Prepares a transaction to be send for the given params.
     def send_transaction(params, legacy, key, nonce)
       if legacy
-        params.merge!({ gas_price: max_fee_per_gas })
+        params.reverse_merge!({ gas_price: max_fee_per_gas })
       else
-        params.merge!({
+        params.reverse_merge!({
           priority_fee: max_priority_fee_per_gas,
           max_gas_fee: max_fee_per_gas,
         })
@@ -450,13 +450,23 @@ module Eth
           nonce: nonce || get_nonce(key.address),
         })
 
-        if params[:gas_limit].zero?
-          params.delete(:gas_limit)
-          params[:gas_limit] = eth_estimate_gas(params)["result"].to_i(16) * 1.5
+        if params[:gas_limit] == 0 || params[:gas_limit] == :max_fee
+          gas_limit = BigDecimal(1.1) * eth_estimate_gas(params.except(:gas_limit))["result"].to_i(16)
+
+          if params[:gas_limit] == :max_fee
+            fee = BigDecimal(1e18) / gas_limit
+            params[:priority_fee] = fee
+            params[:max_gas_fee] = fee
+          end
+
+          params[:gas_limit] = gas_limit
         end
+
+        debug { "Tx: #{params}" }
 
         tx = Eth::Tx.new(params)
         tx.sign key
+
         eth_send_raw_transaction(tx.hex)["result"]
       else
 

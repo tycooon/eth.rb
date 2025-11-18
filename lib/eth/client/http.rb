@@ -77,15 +77,15 @@ module Eth
       debug { "#{response.body}" }
       response.body.to_s
     end
+
+    def debug(&)
+      return unless ENV["ETH_LOG_HTTP"]
+      super
+    end
   end
 
   private
 
   # Attribute for password.
   attr_reader :password
-
-  def debug(&)
-    return unless ENV["ETH_LOG_HTTP"]
-    super
-  end
 end
