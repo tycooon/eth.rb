@@ -74,27 +74,34 @@ module Eth
       types = outputs.map(&:parsed_type)
       data = Eth::Abi.decode(types, data)
 
-      map_with_names(data, outputd)
+      map_with_names(data, outputs)
     end
 
     private
 
     def map_with_names(data, outputs)
-      case outputs.size
-      when 1
+      if outputs.all? { it.name.present? }
+        [tuple(data, outputs)]
+      else
+        data.map.with_index do |value, index|
+          output = outputs[index]
 
-      data.map.with_index do |value, index|
-        type = types[index]
-
-        case [type.base_type, type.dimensions]
-        in "tuple", [0]
-          value.map { map_with_names(it, type.components) }
-        in "tuple", []
-          map_with_names(value, type.components)
-        else
-          [ type.name, value ]
+          case output.type
+          when "tuple[]"
+            value.map { tuple(it, output.parsed_type.components) }
+          when "tuple"
+            tuple(value, output.parsed_type.components)
+          else
+            value
+          end
         end
       end
+    end
+
+    def tuple(values, components)
+      values.map.with_index do |value, index|
+        [components[index].name.to_sym, value]
+      end.to_h
     end
   end
 end

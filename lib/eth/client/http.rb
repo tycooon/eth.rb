@@ -13,7 +13,7 @@
 # limitations under the License.
 
 require "uri"
-require "httpx"
+require "ezclient"
 
 # Provides the {Eth} module.
 module Eth
@@ -59,11 +59,12 @@ module Eth
         @uri = uri
       end
 
-      @client =
-        HTTPX
-          .plugin(:persistent)
-          .with(headers: { "Content-Type" => "application/json" })
-          .with(timeout: Eth.client_timeout)
+      Thread.current[:ezclient] ||=
+        EzClient.new(
+          keep_alive: 60,
+          headers: { "Content-Type" => "application/json" },
+          timeout: Eth.client_timeout,
+        )
     end
 
     # Sends an RPC request to the connected HTTP client.
@@ -72,7 +73,7 @@ module Eth
     # @return [String] a JSON-encoded response.
     def send_request(payload)
       debug_http { "send_request #{@uri} #{payload}" }
-      response = @client.post(@uri, body: payload).raise_for_status
+      response = Thread.current[:ezclient].perform!(:post, @uri, body: payload)
       debug_http { "#{response.inspect}" }
       debug_http { "#{response.body}" }
       response.body.to_s

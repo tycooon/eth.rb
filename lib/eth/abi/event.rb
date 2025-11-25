@@ -106,7 +106,9 @@ module Eth
       # @return [Hash] an enumerator of LogDescription objects.
       def decode_logs(interfaces, logs)
         Enumerator.new do |y|
-          topic_to_interfaces = Hash[interfaces.map { |i| [compute_topic(i), i] }]
+          topic_to_interfaces = Hash[
+            interfaces.select { |x| x["name"] }.map { |i| [compute_topic(i), i] }
+          ]
 
           logs.each do |log|
             topic = log.fetch("topics", [])[0]

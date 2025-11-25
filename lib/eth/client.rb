@@ -392,6 +392,7 @@ module Eth
     # @return [Boolean] true if status is success.
     def tx_succeeded?(hash)
       tx_receipt = eth_get_transaction_receipt(hash)
+      # TODO[@yuran]: add waiting since it returns nil sometimes
       !tx_receipt.nil? && !tx_receipt["result"].nil? && tx_receipt["result"]["status"] == "0x1"
     end
 
@@ -452,7 +453,8 @@ module Eth
 
         if params[:gas_limit] == 0 || params[:gas_limit] == :max_fee
           gas_limit_coef = BigDecimal(ENV.fetch("GAS_LIMIT_COEF", 1.1))
-          gas_limit = gas_limit_coef * eth_estimate_gas(params.except(:gas_limit))["result"].to_i(16)
+          est_params = { **params.slice(:from, :to, :gas, :value, :data), gas_price: max_fee_per_gas }
+          gas_limit = gas_limit_coef * eth_estimate_gas(est_params)["result"].to_i(16)
 
           if params[:gas_limit] == :max_fee
             fee = BigDecimal(1e18) / gas_limit
@@ -492,7 +494,7 @@ module Eth
     # Prepares parameters and sends the command to the client.
     def send_command(command, args)
       @block_number ||= "latest"
-      args << block_number if ["eth_getBalance", "eth_call"].include? command
+      args << block_number if ["eth_getBalance", "eth_call", "eth_estimateGas"].include? command
       debug { "send_command #{command} #{args}" }
       payload = {
         jsonrpc: "2.0",
