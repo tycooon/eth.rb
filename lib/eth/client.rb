@@ -446,7 +446,7 @@ module Eth
       end
       unless key.nil?
         # use the provided key as sender and signer
-        params.merge!({
+        params.reverse_merge!({
           from: key.address,
           nonce: nonce || get_nonce(key.address),
         })

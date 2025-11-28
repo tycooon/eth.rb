@@ -115,7 +115,7 @@ module Eth
     def function(name, args: nil)
       functions.find do |f|
         f.name == name && (args.nil? || args == f.inputs.size)
-      end || raise(ArgumentError, "this function does not exist!")
+      end || raise(ArgumentError, "[#{self.name}] function #{name} with #{args} arguments does not exist!")
     end
 
     # Finds an error by name.
