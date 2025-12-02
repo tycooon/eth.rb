@@ -220,7 +220,7 @@ module Eth
         @signature_v = v
         @signature_r = r
         @signature_s = s
-        return hash
+        return _hash
       end
 
       # Signs the transaction with a provided signature blob.
@@ -244,7 +244,7 @@ module Eth
 
         r, s, v = Signature.dissect signature
         send :_set_signature, v, r, s
-        return hash
+        return _hash
       end
 
       # Encodes a raw transaction object.
@@ -278,7 +278,7 @@ module Eth
       # Gets the transaction hash.
       #
       # @return [String] the transaction hash.
-      def hash
+      def _hash
         Util.bin_to_hex Util.keccak256 encoded
       end
 

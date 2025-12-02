@@ -204,7 +204,7 @@ module Eth
     #
     # @param data [Array] all the data in the typed data structure.
     # @return [String] a Keccak-256 hash of the EIP-712-encoded typed data.
-    def hash(data)
+    def _hash(data)
       data = enforce_typed_data data
 
       # EIP-191 prefix byte

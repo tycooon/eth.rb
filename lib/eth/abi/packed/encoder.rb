@@ -56,7 +56,7 @@ module Eth
           when /^tuple\((.+)\)$/
             tuple($1.split(","), arg)
           when /^hash(\d+)$/
-            hash(arg, $1.to_i / 8)
+            _hash(arg, $1.to_i / 8)
           when "address"
             address(arg)
           when /^(.+)\[\]$/
@@ -129,7 +129,7 @@ module Eth
         end
 
         # Properly encodes hash-strings.
-        def hash(value, byte_size)
+        def _hash(value, byte_size)
           raise EncodingError, "Argument too long: #{value}" unless byte_size > 0 and byte_size <= 32
           hash_bytes = handle_hex_string value, byte_size
           hash_bytes.b

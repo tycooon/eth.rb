@@ -88,7 +88,7 @@ module Eth
           @signature_y_parity = recovery_id
           @signature_r = r
           @signature_s = s
-          return hash
+          return _hash
         end
 
         # Encodes the unsigned authorization payload required for signing.
@@ -386,7 +386,7 @@ module Eth
         @signature_y_parity = recovery_id
         @signature_r = r
         @signature_s = s
-        return hash
+        return _hash
       end
 
       # Signs the transaction with a provided signature blob.
@@ -411,7 +411,7 @@ module Eth
         r, s, v = Signature.dissect signature
         recovery_id = Chain.to_recovery_id v.to_i(16), @chain_id
         send :_set_signature, recovery_id, r, s
-        return hash
+        return _hash
       end
 
       # Encodes a raw transaction object, wraps it in an EIP-2718 envelope
@@ -457,7 +457,7 @@ module Eth
       # Gets the transaction hash.
       #
       # @return [String] the transaction hash.
-      def hash
+      def _hash
         Util.bin_to_hex Util.keccak256 encoded
       end
 
