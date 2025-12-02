@@ -74,7 +74,7 @@ module Eth
         when "tuple"
           tuple arg, type
         when "hash"
-          hash arg, type
+          hash_type arg, type
         when "address"
           address arg
         else
@@ -261,7 +261,7 @@ module Eth
       end
 
       # Properly encodes hash-strings.
-      def hash(arg, type)
+      def hash_type(arg, type)
         size = type.sub_type.to_i
         raise EncodingError, "Argument too long: #{arg}" unless size > 0 and size <= 32
         if arg.is_a? Integer
