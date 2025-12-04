@@ -23,7 +23,7 @@ module Eth
     attr_reader :id
 
     # The connected network's chain ID.
-    attr_reader :chain_id
+    attr_accessor :chain_id
 
     # The connected network's client default account.
     attr_accessor :default_account
@@ -270,7 +270,7 @@ module Eth
     # @return [Object] returns the result of the call.
     # @see https://ethereum.org/en/developers/docs/apis/json-rpc/#eth_call
     def call(contract, function, *args, **kwargs)
-      debug { "call #{contract.address} [#{contract.name}] #{function} #{args}" }
+      debug { "call #{contract.address} [#{contract.name}] #{function} #{args} [block=#{block_number}]" }
       function = contract.function(function, args: args.size)
       output = function.decode_call_result(
         eth_call(
