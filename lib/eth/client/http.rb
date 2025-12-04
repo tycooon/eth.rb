@@ -58,13 +58,6 @@ module Eth
       else
         @uri = uri
       end
-
-      Thread.current[:ezclient] ||=
-        EzClient.new(
-          keep_alive: 60,
-          headers: { "Content-Type" => "application/json" },
-          timeout: Eth.client_timeout,
-        )
     end
 
     # Sends an RPC request to the connected HTTP client.
@@ -73,15 +66,26 @@ module Eth
     # @return [String] a JSON-encoded response.
     def send_request(payload)
       debug_http { "send_request #{@uri} #{payload}" }
-      response = Thread.current[:ezclient].perform!(:post, @uri, body: payload)
+      response = client.perform!(:post, @uri, body: payload)
       debug_http { "#{response.inspect}" }
       debug_http { "#{response.body}" }
       response.body.to_s
     end
 
+    private
+
     def debug_http(&)
       return unless ENV["ETH_LOG_HTTP"]
       debug(&)
+    end
+
+    def client
+      Thread.current[:ezclient] ||=
+        EzClient.new(
+          keep_alive: 60,
+          headers: { "Content-Type" => "application/json" },
+          timeout: Eth.client_timeout,
+        )
     end
   end
 
