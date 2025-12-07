@@ -113,7 +113,7 @@ module Eth
     # @param address [Eth::Address] the address to get the nonce for.
     # @return [Integer] the next nonce to be used.
     def get_nonce(address)
-      eth_get_transaction_count(address, "pending")["result"].to_i 16
+      eth_get_transaction_count(address, "latest")["result"].to_i 16
     end
 
     # Resolves an ENS name to an Ethereum address on the connected chain.
