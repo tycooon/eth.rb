@@ -384,6 +384,9 @@ module Eth
     def tx_mined?(hash)
       mined_tx = eth_get_transaction_by_hash hash
       !mined_tx.nil? && !mined_tx["result"].nil? && !mined_tx["result"]["blockNumber"].nil?
+    rescue EzClient::ResponseStatusError
+      # Some RPCs return errors like {"message":"Unknown block","code":26}
+      false
     end
 
     # Checks whether a contract transaction succeeded or not.
@@ -404,11 +407,10 @@ module Eth
     def wait_for_tx(hash)
       start_time = Time.now
       timeout = 300
-      retry_rate = 0.1
       loop do
         raise Timeout::Error if ((Time.now - start_time) > timeout)
         return hash if tx_mined? hash
-        sleep retry_rate
+        sleep rand(0.2..0.4)
       end
     end
 
