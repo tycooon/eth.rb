@@ -29,6 +29,14 @@ module Eth
   def self.client_timeout=(timeout)
     @client_timeout = timeout
   end
+
+  def self.client_keep_alive
+    @client_keep_alive ||= 60
+  end
+
+  def self.client_keep_alive=(keep_alive)
+    @client_keep_alive = keep_alive
+  end
 end
 
 # Loads the {Eth} module classes.
