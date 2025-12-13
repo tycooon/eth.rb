@@ -346,7 +346,12 @@ module Eth
         hash = wait_for_tx(transact(contract, function, *args, **kwargs))
         return hash, tx_succeeded?(hash)
       rescue RpcError => e
-        raise ContractExecutionError, contract.decode_error(e)
+        if e.message == "already known"
+          # TODO[@yuran]: find tx?
+          :already_known
+        else
+          raise ContractExecutionError, contract.decode_error(e)
+        end
       end
     end
 

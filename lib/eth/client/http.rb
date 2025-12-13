@@ -85,6 +85,7 @@ module Eth
           keep_alive: Eth.client_keep_alive,
           headers: { "Content-Type" => "application/json" },
           timeout: Eth.client_timeout,
+          on_retry: proc { |*args| warn("HTTP REQUEST RETRY: #{args.inspect}") }
         )
     end
   end
