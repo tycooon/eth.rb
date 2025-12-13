@@ -80,7 +80,7 @@ module Eth
     end
 
     def client
-      Thread.current[:ezclient] ||=
+      @client ||=
         EzClient.new(
           keep_alive: Eth.client_keep_alive,
           headers: { "Content-Type" => "application/json" },
