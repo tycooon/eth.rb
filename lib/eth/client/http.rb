@@ -73,10 +73,19 @@ module Eth
     # @param payload [Hash] the RPC request parameters.
     # @return [String] a JSON-encoded response.
     def send_request(payload)
-      debug_http { "send_request #{@uri} #{payload}" }
-      response = self.class.client.post(@uri, body: payload).raise_for_status
-      debug_http { "#{response.inspect}" }
-      debug_http { "#{response.body}" }
+      debug_http { "POST #{@uri}" }
+      debug_http { "Payload: #{payload}" }
+
+      response = nil
+
+      bm = Benchmark.realtime do
+        response = self.class.client.post(@uri, body: payload)
+      end
+
+      debug_http { "Response: #{response.body}" }
+      debug_http { "Benchmark: #{format("%.06f", bm)} seconds" }
+
+      response.raise_for_status
       response.body.to_s
     end
 
