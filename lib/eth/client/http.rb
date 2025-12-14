@@ -13,13 +13,14 @@
 # limitations under the License.
 
 require "uri"
-require "ezclient"
+require "httpx"
 
 # Provides the {Eth} module.
 module Eth
 
   # Provides an HTTP/S-RPC client with basic authentication.
   class Client::Http < Client
+    CLIENT = HTTPX.plugin(:persistent).with(headers: { "Content-Type" => "application/json" })
 
     # The host of the HTTP endpoint.
     attr_reader :host
@@ -66,7 +67,7 @@ module Eth
     # @return [String] a JSON-encoded response.
     def send_request(payload)
       debug_http { "send_request #{@uri} #{payload}" }
-      response = client.perform!(:post, @uri, body: payload)
+      response = CLIENT.post(@uri, body: payload)
       debug_http { "#{response.inspect}" }
       debug_http { "#{response.body}" }
       response.body.to_s
@@ -77,16 +78,6 @@ module Eth
     def debug_http(&)
       return unless ENV["ETH_LOG_HTTP"]
       debug(&)
-    end
-
-    def client
-      @client ||=
-        EzClient.new(
-          keep_alive: Eth.client_keep_alive,
-          headers: { "Content-Type" => "application/json" },
-          timeout: Eth.client_timeout,
-          on_retry: proc { |*args| warn("HTTP REQUEST RETRY: #{args.inspect}") }
-        )
     end
   end
 

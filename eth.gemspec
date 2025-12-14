@@ -61,5 +61,5 @@ Gem::Specification.new do |spec|
   # bls12-381 for BLS signatures and pairings
   spec.add_dependency "bls12-381", "~> 0.3"
 
-  spec.add_dependency "ezclient", "~> 1.6"
+  spec.add_dependency "httpx"
 end
