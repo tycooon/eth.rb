@@ -82,8 +82,7 @@ module Eth
     private
 
     def debug_http(&)
-      return unless ENV["ETH_LOG_HTTP"]
-      debug(&)
+      Eth.http_logger.debug(&)
     end
   end
 

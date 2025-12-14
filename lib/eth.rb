@@ -22,20 +22,20 @@ module Eth
     @logger = logger
   end
 
+  def self.http_logger
+    @http_logger ||= Logger.new(nil)
+  end
+
+  def self.http_logger=(http_logger)
+    @http_logger = http_logger
+  end
+
   def self.client_timeout
     @client_timeout ||= {}
   end
 
   def self.client_timeout=(timeout)
     @client_timeout = timeout
-  end
-
-  def self.client_keep_alive
-    @client_keep_alive ||= 60
-  end
-
-  def self.client_keep_alive=(keep_alive)
-    @client_keep_alive = keep_alive
   end
 end
 
