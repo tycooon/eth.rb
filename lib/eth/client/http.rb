@@ -20,10 +20,13 @@ module Eth
 
   # Provides an HTTP/S-RPC client with basic authentication.
   class Client::Http < Client
-    CLIENT = HTTPX
-      .plugin(:persistent)
-      .with(headers: { "Content-Type" => "application/json" })
-      .with(timeout: Eth.client_timeout)
+    def self.client
+      @client ||=
+        HTTPX
+          .plugin(:persistent)
+          .with(headers: { "Content-Type" => "application/json" })
+          .with(timeout: Eth.client_timeout)
+    end
 
     # The host of the HTTP endpoint.
     attr_reader :host
@@ -70,7 +73,7 @@ module Eth
     # @return [String] a JSON-encoded response.
     def send_request(payload)
       debug_http { "send_request #{@uri} #{payload}" }
-      response = CLIENT.post(@uri, body: payload).raise_for_status
+      response = self.class.client.post(@uri, body: payload).raise_for_status
       debug_http { "#{response.inspect}" }
       debug_http { "#{response.body}" }
       response.body.to_s
