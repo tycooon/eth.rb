@@ -27,7 +27,7 @@ module Eth
           .plugin(:retries)
           .with(headers: { "Content-Type" => "application/json" })
           .with(timeout: Eth.client_timeout)
-          .with(resolver_class: :system)
+          .with(resolver_class: Eth.resolver_class)
           .with(resolver_options: { timeout: Eth.resolver_timeout })
     end
 

@@ -30,6 +30,14 @@ module Eth
     @http_logger = http_logger
   end
 
+  def self.resolver_class
+    @resolver_class ||= :native
+  end
+
+  def self.resolver_class=(resolver_class)
+    @resolver_class = resolver_class
+  end
+
   def self.client_timeout
     @client_timeout ||= {}
   end
