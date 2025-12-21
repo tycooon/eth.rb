@@ -28,6 +28,7 @@ module Eth
           .with(headers: { "Content-Type" => "application/json" })
           .with(timeout: Eth.client_timeout)
           .with(resolver_class: :system)
+          .with(resolver_options: { timeout: Eth.resolver_timeout })
     end
 
     # The host of the HTTP endpoint.

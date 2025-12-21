@@ -37,6 +37,14 @@ module Eth
   def self.client_timeout=(timeout)
     @client_timeout = timeout
   end
+
+  def self.resolver_timeout
+    @resolver_timeout ||= 60
+  end
+
+  def self.resolver_timeout=(resolver_timeout)
+    @resolver_timeout = resolver_timeout
+  end
 end
 
 # Loads the {Eth} module classes.
