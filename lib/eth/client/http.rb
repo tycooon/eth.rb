@@ -27,6 +27,7 @@ module Eth
           .plugin(:retries)
           .with(headers: { "Content-Type" => "application/json" })
           .with(timeout: Eth.client_timeout)
+          .with(resolver_class: :system)
     end
 
     # The host of the HTTP endpoint.
