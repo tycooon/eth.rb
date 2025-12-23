@@ -85,6 +85,7 @@ module Eth
       end
 
       debug_http { "Response: #{response.respond_to?(:body) ? response.body : response.error.inspect}" }
+      debug_http { "Status: #{response.status}" }
       debug_http { "Benchmark: #{format("%.06f", bm)} seconds" }
 
       response.raise_for_status
