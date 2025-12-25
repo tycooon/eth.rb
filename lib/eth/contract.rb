@@ -137,6 +137,7 @@ module Eth
     def decode_error(rpc_error)
       data = rpc_error.data
       return rpc_error.message if data.nil? || errors.nil?
+      return rpc_error.message unless data.is_a?(String)
 
       signature = data[0, 10]
       if (err = errors.find { |e| e.signature == signature })
