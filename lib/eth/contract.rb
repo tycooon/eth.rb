@@ -155,7 +155,7 @@ module Eth
 
     # Create meta classes for smart contracts.
     def build
-      class_name = @name
+      class_name = @name[/\w+$/] || "Contract"
       parent = self
       class_methods = Class.new do
         extend Forwardable
