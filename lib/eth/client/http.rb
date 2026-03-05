@@ -13,7 +13,7 @@
 # limitations under the License.
 
 require "uri"
-require "httpx"
+require "faraday/net_http_persistent"
 
 # Provides the {Eth} module.
 module Eth
