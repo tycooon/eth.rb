@@ -22,12 +22,19 @@ module Eth
   class Client::Http < Client
     def self.client
       @client ||=
-        HTTPX
-          .plugin(:persistent)
-          .with(headers: { "Content-Type" => "application/json" })
-          .with(timeout: Eth.client_timeout)
-          .with(resolver_class: Eth.resolver_class)
-          .with(resolver_options: { timeouts: Eth.resolver_timeout })
+        Faraday.new do |faraday|
+          faraday.options.open_timeout = Eth.client_timeout
+          faraday.options.timeout = Eth.client_timeout
+          faraday.options.write_timeout = Eth.client_timeout
+
+          faraday.headers = { "Content-Type" => "application/json" }
+
+          faraday.response(:raise_error)
+
+          faraday.adapter(:net_http_persistent, pool_size: 25) do |http|
+            http.idle_timeout = 60
+          end
+        end
     end
 
     # The host of the HTTP endpoint.
@@ -80,14 +87,13 @@ module Eth
       response = nil
 
       bm = Benchmark.realtime do
-        response = self.class.client.post(@uri, body: payload)
+        response = self.class.client.post(@uri, payload)
       end
 
       debug_http { "Response: #{response.respond_to?(:body) ? response.body : response.error.inspect}" }
       debug_http { "Status: #{response.respond_to?(:status) ? response.status : 'N/A'}" }
       debug_http { "Benchmark: #{format("%.06f", bm)} seconds" }
 
-      response.raise_for_status
       response.body.to_s
     end
 

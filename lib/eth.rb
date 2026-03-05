@@ -39,7 +39,7 @@ module Eth
   end
 
   def self.client_timeout
-    @client_timeout ||= {}
+    @client_timeout ||= 10
   end
 
   def self.client_timeout=(timeout)

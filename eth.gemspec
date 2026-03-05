@@ -61,5 +61,5 @@ Gem::Specification.new do |spec|
   # bls12-381 for BLS signatures and pairings
   spec.add_dependency "bls12-381", "~> 0.3"
 
-  spec.add_dependency "httpx"
+  spec.add_dependency "faraday-net_http_persistent"
 end
