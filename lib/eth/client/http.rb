@@ -24,7 +24,6 @@ module Eth
       @client ||=
         HTTPX
           .plugin(:persistent)
-          .plugin(:retries)
           .with(headers: { "Content-Type" => "application/json" })
           .with(timeout: Eth.client_timeout)
           .with(resolver_class: Eth.resolver_class)
