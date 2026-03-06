@@ -505,7 +505,6 @@ module Eth
     def send_command(command, args)
       @block_number ||= "latest"
       args << block_number if ["eth_getBalance", "eth_call", "eth_estimateGas"].include? command
-      debug { "send_command #{command} #{args}" }
       payload = {
         jsonrpc: "2.0",
         method: command,
@@ -516,7 +515,6 @@ module Eth
       if (err = output["error"])
         raise RpcError.new(err["message"], err["data"])
       end
-      debug { "result #{output["result"]}" }
       output
     end
 
