@@ -284,11 +284,14 @@ module Eth
           }.compact
         )["result"]
       )
-      if output&.length == 1
-        output[0]
-      else
-        output
-      end
+      result =
+        if output&.length == 1
+          output[0]
+        else
+          output
+        end
+      debug { "call result: #{result}" }
+      result
     rescue RpcError => e
       raise ContractExecutionError, contract.decode_error(e)
     end
