@@ -21,7 +21,7 @@ module Eth
   # Provides an HTTP/S-RPC client with basic authentication.
   class Client::Http < Client
     def self.client
-      @client ||=
+      Thread.current[:__eth_http_client] ||=
         Faraday.new do |faraday|
           faraday.options.open_timeout = Eth.client_timeout
           faraday.options.timeout = Eth.client_timeout
