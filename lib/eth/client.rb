@@ -505,10 +505,17 @@ module Eth
     def send_command(command, args)
       @block_number ||= "latest"
       args << block_number if ["eth_getBalance", "eth_call", "eth_estimateGas"].include? command
+
+      if command == "eth_feeHistory"
+        params = [*marshal([args[0], args[1]]), args[2]]
+      else
+        params = marshal(args)
+      end
+
       payload = {
         jsonrpc: "2.0",
         method: command,
-        params: marshal(args),
+        params: params,
         id: next_id,
       }
       output = JSON.parse(send_request(payload.to_json))
