@@ -530,12 +530,14 @@ module Eth
       @id += 1
     end
 
-    # expects Hash object
+    # Converts snake_case keys to camelCase while preserving
+    # keys that are already camelCase (e.g. stateOverrides, stateDiff).
     def camelize!(params)
       params.transform_keys! do |k|
-        k = k.to_s.split(/_/).map(&:capitalize).join
-        k[0] = k[0].downcase
-        k.to_sym
+        parts = k.to_s.split("_")
+        parts[0] = parts[0].dup
+        parts[1..].each { _1[0] = _1[0].upcase if _1[0] }
+        parts.join.to_sym
       end
     end
 
