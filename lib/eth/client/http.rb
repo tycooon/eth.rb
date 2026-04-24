@@ -13,7 +13,7 @@
 # limitations under the License.
 
 require "uri"
-require "faraday/net_http_persistent"
+require "httpx/adapters/faraday"
 
 # Provides the {Eth} module.
 module Eth
@@ -31,8 +31,8 @@ module Eth
 
           faraday.response(:raise_error)
 
-          faraday.adapter(:net_http_persistent, pool_size: 25) do |http|
-            http.idle_timeout = 60
+          faraday.adapter(:httpx) do |session|
+            session.with(timeout: { request_timeout: Eth.client_timeout, keep_alive_timeout: 60 })
           end
         end
     end
